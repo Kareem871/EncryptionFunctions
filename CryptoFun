@@ -1,0 +1,107 @@
+# Byte = String
+# 1 byte = 1 letter = 8 bit
+# in ASCII  7 bit
+# UTF-16 = Unicode
+import base64
+
+def DecimalToBinary(d):
+    return "{0:b}".format(int(d))
+
+# 8-bin -> 1 letter
+def BinaryToString(s):
+    return ''.join(chr(int(s[i*8:i*8+8], 2)) for i in range(len(s)//8))
+
+def xor(a, b):
+    y = int(a,2) ^ int(b,2)
+    y = '{0:b}'.format(y)
+    return str(y)
+
+def StringToBinary(str):
+    return ''.join(format(ord(i), '08b') for i in str)
+
+def HexToBinary(s):
+    return str(bin(int(s, 16)).zfill(8))[2:]
+    # return binascii.unhexlify(s)
+
+def BinaryToHex(s):
+    return hex(int(s, 2))
+    # If Hex starts with 0x use the below :
+    # return hex(int(s, 2))[2:]
+    # return binascii.b2a_hex(s)
+
+# ASCII to String chr()
+# String to ASCII ord()
+
+def HexToString(hexStr):
+    bytes = []
+    hexStr = ''.join( hexStr.split(" ") )
+    for i in range(0, len(hexStr), 2):
+        bytes.append( chr( int (hexStr[i:i+2], 16 ) ) )
+    return ''.join( bytes )
+
+def gcd(a, b):
+    while b != 0:
+        t = b
+        b = a % b
+        a = t
+    return a
+
+def egcd(a, b):
+    # Extended Euclidean algorithm
+    x,y, u,v = 0,1, 1,0
+    while a != 0:
+        q, r = b//a, b % a
+        m, n = x - u * q, y - v * q
+        b,a, x,y, u,v = a,r, u,v, m,n
+    # gcd = b
+    return x, y
+
+# Let p be Prime number :
+# a ** p mod p = a && a ** (p-1) mod p = 1
+# This called Fermat's little theorem
+
+def qr(a, p):
+    # X**2 ≡ a mod p
+    # X**2 is quadratic residue to p if there is {0, 1 ... p-1} mod p ≡ a mod p
+    # In "ints" list there are two non-quadratic residues and one quadratic residue. Assuming p = 29
+    # ints = [14, 6, 11]
+    # return [a for a in range(p) if pow(a, 2, p) in ints]
+    # This to get all square roots for p
+    # print [a for a in range(p) if pow(a, 2, p) == n]
+
+    if (p % 2 != 0):
+        return pow(a, int(p-1)//2, p)  # This is Legendre Symbol: (a / p) ≡ pow(a, int((p-1)/2), p)
+    # (a / p) = 1 if a is a quadratic residue and a ≢ 0 mod p
+    # (a / p) = -1 if a is a quadratic non-residue mod p
+    # (a / p) = 0 if a ≡ 0 mod p
+
+def crt(a, n):
+    # Chinese Reminder Theorem
+    # x ≡ a1 % n1, x ≡ a2 % n2, ..... x ≡ ak % nk
+    # Given array of a[] and n[] as inputs
+    length = len(n)
+    Ntot = 1
+    for i in n:
+        Ntot *= i
+    # print("N Total : ", Ntot)
+    N = []
+    c = 1
+    for i in n:
+        for j in n:
+            if j != i:
+                c *= j
+        N.append(c)
+        c = 1
+    # N = [n[1] * n[2], n[0] * n[2], n[0] * n[1]]
+    # print("N : ", N)
+    y = [pow(N[i], n[i] - 2, n[i]) for i in range(length)]
+    # print(y)
+    mysterious_a = 0
+    for i in range(length):
+        # print(i, " : ", a[i] * N[i] * y[i])
+        mysterious_a += a[i] * N[i] * y[i]
+    # print(mysterious_a)
+    mysterious_a %= Ntot
+    return mysterious_a
+
+# print(egcd(128, 7))
